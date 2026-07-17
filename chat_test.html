@@ -57,14 +57,22 @@
         }
     </style>
 
-    <!-- ECv2初期化完了後に非表示プレチャットをセット -->
+    <!-- ECv2イベントリスナー -->
     <script>
+        let chatReady = false;
+
         window.addEventListener("onEmbeddedMessagingReady", () => {
             console.log("onEmbeddedMessagingReady fired");
             embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
                 "currentURL": window.location.href
             });
             console.log("setHiddenPrechatFields called:", window.location.href);
+        });
+
+        // launchChat() はこのイベント後でないと呼べない
+        window.addEventListener("onEmbeddedMessagingButtonCreated", () => {
+            console.log("onEmbeddedMessagingButtonCreated fired");
+            chatReady = true;
         });
     </script>
 </head>
@@ -84,6 +92,7 @@
         function initEmbeddedMessaging() {
             try {
                 embeddedservice_bootstrap.settings.language = 'en_US';
+                embeddedservice_bootstrap.settings.hideLauncherButton = true;
 
                 embeddedservice_bootstrap.init(
                     '00DIl000000H31Y',
@@ -102,10 +111,10 @@
 
     <script>
         function openChat() {
-            if (typeof embeddedservice_bootstrap !== 'undefined' && embeddedservice_bootstrap.utilAPI) {
+            if (chatReady && embeddedservice_bootstrap.utilAPI) {
                 embeddedservice_bootstrap.utilAPI.launchChat();
             } else {
-                alert('チャットがまだ読み込み中です。少し待ってから再クリックしてください。');
+                alert('チャットがまだ準備中です。少し待ってから再クリックしてください。');
             }
         }
     </script>
