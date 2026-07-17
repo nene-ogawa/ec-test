@@ -73,6 +73,23 @@
         window.addEventListener("onEmbeddedMessagingButtonCreated", () => {
             console.log("onEmbeddedMessagingButtonCreated fired");
             chatReady = true;
+            // CSS で隠せていない場合の保険：JS側でも強制非表示
+            const launcher = document.querySelector('embedded-messaging-launcher')
+                          || document.querySelector('embeddedservice-help-button');
+            if (launcher) {
+                launcher.style.setProperty('display', 'none', 'important');
+                console.log('launcher hidden via JS:', launcher.tagName);
+            } else {
+                console.log('launcher element not found — check DevTools > Elements');
+            }
+        });
+
+        // チャットが最小化 or 会話終了 → ピンクボタンを再表示
+        window.addEventListener("onEmbeddedMessagingWindowMinimized", () => {
+            document.getElementById('custom-chat-btn').style.display = 'block';
+        });
+        window.addEventListener("onEmbeddedMessagingConversationClosed", () => {
+            document.getElementById('custom-chat-btn').style.display = 'block';
         });
     </script>
 </head>
@@ -92,7 +109,6 @@
         function initEmbeddedMessaging() {
             try {
                 embeddedservice_bootstrap.settings.language = 'en_US';
-                embeddedservice_bootstrap.settings.hideLauncherButton = true;
 
                 embeddedservice_bootstrap.init(
                     '00DIl000000H31Y',
@@ -117,7 +133,8 @@
             }
             embeddedservice_bootstrap.utilAPI.launchChat()
                 .then(() => {
-                    console.log('チャット起動成功');
+                    // チャット起動成功 → ピンクボタンを非表示
+                    document.getElementById('custom-chat-btn').style.display = 'none';
                 })
                 .catch(() => {
                     console.error('チャット起動失敗');
