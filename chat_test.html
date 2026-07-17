@@ -111,11 +111,17 @@
 
     <script>
         function openChat() {
-            if (chatReady && embeddedservice_bootstrap.utilAPI) {
-                embeddedservice_bootstrap.utilAPI.launchChat();
-            } else {
+            if (!chatReady) {
                 alert('チャットがまだ準備中です。少し待ってから再クリックしてください。');
+                return;
             }
+            embeddedservice_bootstrap.utilAPI.launchChat()
+                .then(() => {
+                    console.log('チャット起動成功');
+                })
+                .catch(() => {
+                    console.error('チャット起動失敗');
+                });
         }
     </script>
 </body>
