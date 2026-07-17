@@ -87,6 +87,153 @@
             50%       { transform: translateY(-10px); }
         }
 
+        /* === 初期メニューパネル === */
+        #initial-menu-panel {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 24px;
+            width: 375px;
+            max-height: 90vh;
+            flex-direction: column;
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.18);
+            z-index: 9998;
+            overflow: hidden;
+        }
+
+        .imenu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            height: 48px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #D6334E 0%, #CC0022 100%);
+        }
+
+        .imenu-header-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            transition: background 0.15s;
+        }
+        .imenu-header-btn:hover { background: rgba(255,255,255,0.18); }
+
+        .imenu-header-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            flex: 1;
+            text-align: center;
+        }
+
+        .imenu-header-minimize-line {
+            display: block;
+            width: 16px;
+            height: 2px;
+            background: #fff;
+            border-radius: 1px;
+            transform: translateY(4px);
+            pointer-events: none;
+        }
+
+        .imenu-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 20px 28px;
+            background: #fff;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .imenu-mascot {
+            width: 100px;
+            height: auto;
+            margin-bottom: 16px;
+            object-fit: contain;
+        }
+
+        .imenu-title {
+            margin: 0 0 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-align: center;
+        }
+
+        .imenu-subtitle {
+            margin: 0 0 24px;
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .imenu-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 335px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .imenu-item {
+            width: 100%;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 16px;
+            box-sizing: border-box;
+            background: #F0F0F0;
+            border: none;
+            border-radius: 28px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s;
+        }
+        .imenu-item:hover { opacity: 0.8; }
+
+        .imenu-item-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .imenu-item-icon svg { display: block; }
+
+        .imenu-item-label {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+        }
+
+        .imenu-item-arrow {
+            color: #869199;
+            font-size: 18px;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
         /* 最大化: chatMaximizeToggle と同じ方式でチャット枠を拡大 */
         body.chat-maximized .embeddedMessagingFrame,
         body.chat-maximized .embeddedServiceSidebar,
@@ -203,6 +350,59 @@
     <h1>チャットテストページ</h1>
     <p>右下のアイコンをクリックするとチャットが開きます。</p>
 
+    <!-- 初期メニューパネル（ECv2 起動前に表示） -->
+    <div id="initial-menu-panel">
+        <div class="imenu-header">
+            <button class="imenu-header-btn" onclick="closeMenuPanel()" title="閉じる">×</button>
+            <span class="imenu-header-title">お客さまサポートチャット</span>
+            <button class="imenu-header-btn" onclick="closeMenuPanel()" title="閉じる">
+                <span class="imenu-header-minimize-line"></span>
+            </button>
+        </div>
+        <div class="imenu-body">
+            <img src="ChatbotIcon_shadow.png" class="imenu-mascot" alt="" />
+            <h2 class="imenu-title">何かお困りですか？</h2>
+            <p class="imenu-subtitle">ご用件に応じて、以下の選択肢からお選びください。</p>
+            <ul class="imenu-list">
+                <li>
+                    <button class="imenu-item" onclick="selectMenuOption('自動車保険のお手続き')">
+                        <span class="imenu-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D6334E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h2l2-4h10l2 4h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17" r="2.5"/><circle cx="16.5" cy="17" r="2.5"/></svg></span>
+                        <span class="imenu-item-label">自動車保険のお手続き</span>
+                        <span class="imenu-item-arrow">›</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="imenu-item" onclick="selectMenuOption('自動車保険以外のお手続き')">
+                        <span class="imenu-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D6334E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+                        <span class="imenu-item-label">自動車保険以外のお手続き</span>
+                        <span class="imenu-item-arrow">›</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="imenu-item" onclick="selectMenuOption('保険に関するご質問')">
+                        <span class="imenu-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D6334E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                        <span class="imenu-item-label">保険に関するご質問</span>
+                        <span class="imenu-item-arrow">›</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="imenu-item" onclick="selectMenuOption('事故・保険金請求のご連絡')">
+                        <span class="imenu-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D6334E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></span>
+                        <span class="imenu-item-label">事故・保険金請求のご連絡</span>
+                        <span class="imenu-item-arrow">›</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="imenu-item" onclick="selectMenuOption('ご意見・ご要望')">
+                        <span class="imenu-item-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D6334E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+                        <span class="imenu-item-label">ご意見・ご要望</span>
+                        <span class="imenu-item-arrow">›</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <!-- 最大化トグルボタン（chatMaximizeToggle LWC の機能を移植） -->
     <button id="maximize-toggle-btn" onclick="toggleMaximize()" title="最大化" aria-label="最大化">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -256,13 +456,28 @@
                 alert('チャットがまだ準備中です。少し待ってから再クリックしてください。');
                 return;
             }
-            embeddedservice_bootstrap.utilAPI.launchChat()
-                .then(() => {
-                    document.getElementById('custom-chat-btn').style.display = 'none';
-                })
-                .catch(() => {
-                    console.error('チャット起動失敗');
+            // 初期メニューパネルを表示（ECv2 は起動しない）
+            document.getElementById('initial-menu-panel').style.display = 'flex';
+            document.getElementById('custom-chat-btn').style.display = 'none';
+        }
+
+        // メニュー選択 → 選択値を prechat フィールドに設定して ECv2 起動
+        function selectMenuOption(label) {
+            document.getElementById('initial-menu-panel').style.display = 'none';
+            try {
+                embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
+                    currentURL: window.location.href,
+                    selectedMenu: label
                 });
+            } catch (e) {}
+            embeddedservice_bootstrap.utilAPI.launchChat()
+                .catch(() => console.error('チャット起動失敗'));
+        }
+
+        // ×/— ボタン → メニューを閉じてピンクボタンを戻す
+        function closeMenuPanel() {
+            document.getElementById('initial-menu-panel').style.display = 'none';
+            document.getElementById('custom-chat-btn').style.display = 'flex';
         }
     </script>
 
