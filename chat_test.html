@@ -37,34 +37,63 @@
             0%, 100% { transform: translateY(0px); }
             50%       { transform: translateY(-10px); }
         }
+
+        /* 最小化: chatMaximizeToggle と同じ方式でチャット枠を非表示 */
+        body.chat-minimized .embeddedMessagingFrame,
+        body.chat-minimized .embeddedServiceSidebar,
+        body.chat-minimized [class*="embeddedMessaging"]:not(.embeddedMessagingTopContainer),
+        body.chat-minimized embedded-messaging,
+        body.chat-minimized embedded-service-portal,
+        body.chat-minimized #embeddedMessagingFrame,
+        body.chat-minimized #embedded-messaging,
+        body.chat-minimized iframe[name*="embeddedMessaging"],
+        body.chat-minimized iframe[title*="チャット"],
+        body.chat-minimized iframe[title*="Messaging"] {
+            display: none !important;
+        }
     </style>
 
     <!-- ECv2イベントリスナー -->
     <script>
         let chatReady = false;
+        let isMinimized = false;
 
         window.addEventListener("onEmbeddedMessagingReady", () => {
-            console.log("onEmbeddedMessagingReady fired");
             embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
                 "currentURL": window.location.href
             });
-            console.log("setHiddenPrechatFields called:", window.location.href);
         });
 
         // launchChat() はこのイベント後でないと呼べない
         window.addEventListener("onEmbeddedMessagingButtonCreated", () => {
-            console.log("onEmbeddedMessagingButtonCreated fired");
             chatReady = true;
-            // 公式API: 標準ボタンを非表示
             embeddedservice_bootstrap.utilAPI.hideChatButton();
         });
 
-        // チャットが最小化 or 会話終了 → ピンクボタンを再表示
+        // ECv2標準UIで最小化/終了した場合（カスタムヘッダー経由では通常発火しない）
         window.addEventListener("onEmbeddedMessagingWindowMinimized", () => {
+            isMinimized = true;
+            document.body.classList.add('chat-minimized');
             document.getElementById('custom-chat-btn').style.display = 'block';
         });
         window.addEventListener("onEmbeddedMessagingConversationClosed", () => {
+            isMinimized = false;
+            document.body.classList.remove('chat-minimized');
             document.getElementById('custom-chat-btn').style.display = 'block';
+        });
+
+        // カスタムヘッダーLWCからのpostMessageを受信
+        window.addEventListener('message', (event) => {
+            if (!event.data || typeof event.data !== 'object') return;
+            if (event.data.type === 'chat-minimize') {
+                // chatMaximizeToggle と同方式: body クラスで CSS 切替
+                isMinimized = true;
+                document.body.classList.add('chat-minimized');
+                document.getElementById('custom-chat-btn').style.display = 'block';
+            } else if (event.data.type === 'chat-end-conversation') {
+                // LWC 側でストレージクリア済み → ページリロードでクリーンな状態に
+                window.location.reload();
+            }
         });
     </script>
 </head>
@@ -103,13 +132,19 @@
 
     <script>
         function openChat() {
+            // 最小化中はチャットを再起動せず、フレームを再表示するだけ
+            if (isMinimized) {
+                isMinimized = false;
+                document.body.classList.remove('chat-minimized');
+                document.getElementById('custom-chat-btn').style.display = 'none';
+                return;
+            }
             if (!chatReady) {
                 alert('チャットがまだ準備中です。少し待ってから再クリックしてください。');
                 return;
             }
             embeddedservice_bootstrap.utilAPI.launchChat()
                 .then(() => {
-                    // チャット起動成功 → ピンクボタンを非表示
                     document.getElementById('custom-chat-btn').style.display = 'none';
                 })
                 .catch(() => {
