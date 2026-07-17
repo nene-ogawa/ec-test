@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チャットテスト</title>
+
+    <!-- デフォルトのECv2ランチャーボタンを非表示 -->
+    <style>
+        embedded-messaging-launcher,
+        embeddedservice-help-button,
+        embedded-messaging-conversation-button,
+        .embeddedServiceHelpButton,
+        .embedded-service-help-button,
+        .embeddedMessagingConversationButton,
+        .embeddedMessagingLauncher,
+        .embedded-messaging-launcher,
+        .embedded-messaging-conversation-button,
+        [data-testid="embeddedMessagingLauncher"],
+        [data-testid="embedded-messaging-launcher"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        /* カスタムチャットボタン */
+        #custom-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            z-index: 9999;
+        }
+
+        .icon-clip {
+            animation: float 1.8s ease-in-out infinite;
+            animation-play-state: paused;
+        }
+
+        #custom-chat-btn:hover .icon-clip {
+            animation-play-state: running;
+        }
+
+        .icon-img {
+            width: 86px;
+            height: 86px;
+            object-fit: contain;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-10px); }
+        }
+    </style>
+
+    <!-- ECv2初期化完了後に非表示プレチャットをセット -->
+    <script>
+        window.addEventListener("onEmbeddedMessagingReady", () => {
+            console.log("onEmbeddedMessagingReady fired");
+            embeddedservice_bootstrap.prechatAPI.setHiddenPrechatFields({
+                "currentURL": window.location.href
+            });
+            console.log("setHiddenPrechatFields called:", window.location.href);
+        });
+    </script>
+</head>
+<body>
+    <h1>チャットテストページ</h1>
+    <p>右下のアイコンをクリックするとチャットが開きます。</p>
+
+    <!-- カスタムチャットボタン -->
+    <button id="custom-chat-btn" onclick="openChat()" title="チャットを開く">
+        <div class="icon-clip">
+            <img src="ChatbotIcon_trim.png" class="icon-img" alt="チャットを開く">
+        </div>
+    </button>
+
+    <!-- ECv2スニペット -->
+    <script type='text/javascript'>
+        function initEmbeddedMessaging() {
+            try {
+                embeddedservice_bootstrap.settings.language = 'en_US';
+
+                embeddedservice_bootstrap.init(
+                    '00DIl000000H31Y',
+                    'SF_V1',
+                    'https://d5h00000141dheay--agent0507.sandbox.my.site.com/ESWSFV11783329435238',
+                    {
+                        scrt2URL: 'https://d5h00000141dheay--agent0507.sandbox.my.salesforce-scrt.com'
+                    }
+                );
+            } catch (err) {
+                console.error('Error loading Embedded Messaging: ', err);
+            }
+        };
+    </script>
+    <script type='text/javascript' src='https://d5h00000141dheay--agent0507.sandbox.my.site.com/ESWSFV11783329435238/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+    <script>
+        function openChat() {
+            if (typeof embeddedservice_bootstrap !== 'undefined' && embeddedservice_bootstrap.utilAPI) {
+                embeddedservice_bootstrap.utilAPI.launchChat();
+            } else {
+                alert('チャットがまだ読み込み中です。少し待ってから再クリックしてください。');
+            }
+        }
+    </script>
+</body>
+</html>
