@@ -5,25 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>チャットテスト</title>
 
-    <!-- デフォルトのECv2ランチャーボタンを非表示 -->
     <style>
-        embedded-messaging-launcher,
-        embeddedservice-help-button,
-        embedded-messaging-conversation-button,
-        .embeddedServiceHelpButton,
-        .embedded-service-help-button,
-        .embeddedMessagingConversationButton,
-        .embeddedMessagingLauncher,
-        .embedded-messaging-launcher,
-        .embedded-messaging-conversation-button,
-        [data-testid="embeddedMessagingLauncher"],
-        [data-testid="embedded-messaging-launcher"] {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-        }
-
         /* カスタムチャットボタン */
         #custom-chat-btn {
             position: fixed;
@@ -73,15 +55,8 @@
         window.addEventListener("onEmbeddedMessagingButtonCreated", () => {
             console.log("onEmbeddedMessagingButtonCreated fired");
             chatReady = true;
-            // CSS で隠せていない場合の保険：JS側でも強制非表示
-            const launcher = document.querySelector('embedded-messaging-launcher')
-                          || document.querySelector('embeddedservice-help-button');
-            if (launcher) {
-                launcher.style.setProperty('display', 'none', 'important');
-                console.log('launcher hidden via JS:', launcher.tagName);
-            } else {
-                console.log('launcher element not found — check DevTools > Elements');
-            }
+            // 公式API: 標準ボタンを非表示
+            embeddedservice_bootstrap.utilAPI.hideChatButton();
         });
 
         // チャットが最小化 or 会話終了 → ピンクボタンを再表示
@@ -109,6 +84,7 @@
         function initEmbeddedMessaging() {
             try {
                 embeddedservice_bootstrap.settings.language = 'en_US';
+                embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
 
                 embeddedservice_bootstrap.init(
                     '00DIl000000H31Y',
