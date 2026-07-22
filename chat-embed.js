@@ -280,7 +280,19 @@
 
         window.addEventListener('message', (event) => {
             if (!event.data || typeof event.data !== 'object') return;
-            if (event.data.type === 'chat-minimize') {
+            if (event.data.type === 'chat-embed-ready') {
+                // LWCが準備完了の合図 → このページのURLをチャット内に送り返す
+                try {
+                    document.querySelectorAll('iframe').forEach(iframe => {
+                        try {
+                            iframe.contentWindow.postMessage({
+                                type: 'chat-embed-url',
+                                url: window.location.href
+                            }, '*');
+                        } catch (e) {}
+                    });
+                } catch (e) {}
+            } else if (event.data.type === 'chat-minimize') {
                 isMinimized = true;
                 document.body.classList.add('chat-minimized');
                 document.getElementById('chat-embed-btn').style.display = 'block';
